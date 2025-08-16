@@ -1,7 +1,7 @@
 name: Create Android Project
 
 on:
-  workflow_dispatch:   # يظهر زر Run workflow يدوياً
+  workflow_dispatch:
 
 jobs:
   create:
@@ -11,6 +11,43 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # اطبع مسار الريبو والفرع الحاليين للتأكد
+      - name: Show repo info
+        run: |
+          echo "BRANCH = $GITHUB_REF"
+          echo "PWD = $(pwd)"
+          ls -la
+
+      # اطبع محتوى pubspec.yaml قبل التعديل
+      - name: Show pubspec BEFORE
+        run: |
+          echo "======== pubspec.yaml (BEFORE) ========"
+          cat pubspec.yaml || echo "pubspec.yaml NOT FOUND!"
+          echo "======================================="
+
+      # أصلح اسم الباكدج لو كان غلط، وادفع التعديل للـ repo
+      - name: Ensure correct timezone package (fix if needed)
+        run: |
+          set -e
+          if grep -q "flutter_native_timezone_updated" pubspec.yaml; then
+            echo ">> Found WRONG package name. Fixing..."
+            sed -i 's/flutter_native_timezone_updated:.*/flutter_native_timezone: ^2.0.0/' pubspec.yaml
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "github-actions[bot]@users.noreply.github.com"
+            git add pubspec.yaml
+            git commit -m "Fix: replace flutter_native_timezone_updated with flutter_native_timezone"
+            git push
+          else
+            echo ">> Package name already correct."
+          fi
+
+      # اطبع المحتوى بعد الإصلاح للتأكيد
+      - name: Show pubspec AFTER
+        run: |
+          echo "======== pubspec.yaml (AFTER) ========"
+          cat pubspec.yaml
+          echo "======================================"
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -18,3 +55,6 @@ jobs:
 
       - name: Create Android folder
         run: flutter create .
+
+      - name: Flutter pub get
+        run: flutter pub get
