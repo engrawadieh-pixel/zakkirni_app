@@ -2,51 +2,34 @@ name: Build Android APK
 
 on:
   workflow_dispatch:
-  push:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-      - name: Set up Java 17
-        uses: actions/setup-java@v4
+      - name: Set up Java
+        uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Set up Flutter (pin version)
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.2'   # نسختك المحددة
-          cache: true                 # اختياري لتسريع البناء
+          flutter-version: '3.13.9'   # نسخة ثابتة ومجربة
 
-      # أنشئ مشروع Flutter (android/...) إذا مش موجود
-      - name: Create Flutter project if missing
-        run: |
-          if [ ! -d "android" ]; then
-            flutter create --project-name zakkirni_app --platforms=android .
-          fi
-
-      # استخدم كودك كمدخل للتطبيق
-      - name: Use your app_main.dart as main.dart
-        run: |
-          if [ -f "lib/app_main.dart" ]; then
-            cp lib/app_main.dart lib/main.dart
-          fi
-
-      - name: Pub get
+      - name: Install dependencies
         run: flutter pub get
 
-      - name: Build debug APK
+      - name: Build APK
         run: flutter build apk --debug
 
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
         with:
           name: app-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
