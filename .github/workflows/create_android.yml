@@ -47,6 +47,11 @@ jobs:
           echo "======================================="
 
       - name: Set up Flutter
+            - name: Search for WRONG package anywhere
+        run: |
+          echo "Searching for 'flutter_native_timezone_updated' ..."
+          grep -R --line-number "flutter_native_timezone_updated" . || echo "NOT FOUND"
+
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
