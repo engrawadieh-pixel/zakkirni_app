@@ -11,59 +11,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # اطبع معلومات للتأكد من الفرع والمجلد
-      - name: Show repo info
-        run: |
-          echo "BRANCH = $GITHUB_REF"
-          echo "PWD = $(pwd)"
-          ls -la
-
-      # اطبع pubspec قبل الإصلاح
-      - name: Show pubspec BEFORE
-        run: |
-          echo "======== pubspec.yaml (BEFORE) ========"
-          cat pubspec.yaml || echo "pubspec.yaml NOT FOUND!"
-          echo "======================================="
-
-      # أصلح أي ظهور لاسم الباكدج الغلط داخل مساحة العمل (بدون كومِت)
-      - name: Fix wrong timezone package name in workspace
-        run: |
-          set -e
-          if grep -q "flutter_native_timezone_updated" pubspec.yaml; then
-            echo ">> Found WRONG package name. Fixing in workspace..."
-            # لو كان مع رقم نسخة
-            sed -i -E 's/flutter_native_timezone_updated:[^\r\n]*/flutter_native_timezone: ^2.0.0/' pubspec.yaml
-            # ولو كان بدون نسخة
-            sed -i -E 's/flutter_native_timezone_updated/flutter_native_timezone/g' pubspec.yaml
-          else
-            echo ">> Package name already correct."
-          fi
-
-      # اطبع pubspec بعد الإصلاح للتأكيد
-      - name: Show pubspec AFTER
-        run: |
-          echo "======== pubspec.yaml (AFTER) ========="
-          cat pubspec.yaml
-          echo "======================================="
-
       - name: Set up Flutter
-            - name: Search for WRONG package anywhere
-        run: |
-          echo "Searching for 'flutter_native_timezone_updated' ..."
-          grep -R --line-number "flutter_native_timezone_updated" . || echo "NOT FOUND"
-
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
 
-      # أنشئ مجلد android فقط إذا مش موجود
-      - name: Create Android folder if missing
+      - name: Search for WRONG package anywhere
         run: |
-          if [ ! -d "android" ]; then
-            flutter create .
-          else
-            echo "Android folder already exists."
-          fi
+          echo "Searching for 'flutter_native_timezone_updated' ..."
+          grep -R --line-number "flutter_native_timezone_updated" . || echo "NOT FOUND"
 
-      - name: Flutter pub get
-        run: flutter pub get
+      - name: Show pubspec.yaml content
+        run: cat pubspec.yaml
+
+      - name: Create Android folder
+        run: flutter create .
