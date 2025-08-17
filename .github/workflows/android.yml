@@ -1,7 +1,7 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # يسمح بتشغيله يدويًا من GitHub Actions
 
 jobs:
   build:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.13.9'
+          flutter-version: '3.13.9'  # تأكد إنها نفس نسخة جهازك
 
       - name: Install dependencies
         run: flutter pub get
@@ -33,4 +33,3 @@ jobs:
         with:
           name: app-debug
           path: build/app/outputs/flutter-apk/app-debug.apk
-          
