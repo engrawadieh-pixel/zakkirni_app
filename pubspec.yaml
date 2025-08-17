@@ -1,20 +1,17 @@
 name: zakkirni_app
-description: Simple reminders to connect with your loved ones.
-publish_to: "none"
-version: 0.1.0+1
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 1.0.0+1
 
 environment:
-  sdk: ">=3.3.0 <4.0.0"
+  sdk: ">=2.19.6 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
-  flutter_local_notifications: ^17.2.1
-  shared_preferences: ^2.2.3
-  timezone: ^0.9.2
- # flutter_native_timezone: ^2.0.0
+  cupertino_icons: ^1.0.2
 
 dev_dependencies:
   flutter_test:
